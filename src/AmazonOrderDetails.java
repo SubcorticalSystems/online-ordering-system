@@ -1,4 +1,5 @@
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,36 +11,38 @@ public class AmazonOrderDetails {
 
 //Main Method
             public static void main(String[] args) {
-                AmazonOrderDetails od = new AmazonOrderDetails();  // Name of main class driver
-                ArrayList<Product> products = new ArrayList<>();
-                od.addProducts(products); // Create your product data here
-                Order order = od.createOrder(products); // Create your order
-                od.createShipment(order); // Ship your order
-                od.createPayment(order); // Create a payment record
-                od.printOrderDetails(order); // Print
-                od.printInvoice(order);
+                AmazonOrderDetails amazon = new AmazonOrderDetails();
+                amazon.testAmazonOrderDetails();
             }
 
-    //Execute Main Method calls
-    private void addProducts(ArrayList<Product> products) {
-        products.add(new Product("11-01", "Shower Filter", "Amazon.com Services LLC", 27.99, Product.Condition.New ));
+    public void testAmazonOrderDetails() {
+        ArrayList<Product> products = new ArrayList<>();
+        addProductsToArrayList(products);
+
+        ArrayList<OrderItem> orderItems;
+        // add a list of products to the order
+        orderItems = createOrderItems(products);
+        // Create a customer
+        Customer customer =  new Customer("221", "Sully Huckster", "1298 Hares Hill Road", "Kimberton, PA 19442", "United States");
+        // Create an order.  No shipment or payment yet
+        Order order = createOrder(orderItems, customer);
+        // Create a shipment for the order
+        createShipment(order);
+        // Create a payment for the order
+        createPayment(order);
+        // print the order for the customer
+        printOrderDetails(order);
+        // print the payment invoice for the order
+        printInvoice(order);
     }
 
-    private Order createOrder(ArrayList<Product> products) {
-        Order order = null;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        order = new Order("114-4625135-4373821",
-                //   new SimpleDateFormat("dd/MM/yyyy").parse("21/9/2022"),
-                new Date(), orderItems, 7.00, shippingHandling, paTAX, 8.00, "Matt" );
-        return order;
-    }
 
-    private void createShipment(Order order) {
+    public void createShipment(Order order) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Shipment shipment = new Shipment("225566", "UPS", ShipmentStatus.Delivered, "1Z3Y67380336377341",
+            Shipment shipment = new Shipment("225566", "UPS", Shipment.ShipmentStatus.Delivered, "1Z3Y67380336377341",
                     dateFormat.parse("22/5/2020"),
-                    dateFormat.parse("22/5/2020"), ShipmentSpeed.OneDay);
+                    dateFormat.parse("22/5/2020"), Shipment.ShipmentSpeed.OneDay);
             order.shipment = shipment;
         }
         catch (ParseException e) {
@@ -50,7 +53,7 @@ public class AmazonOrderDetails {
     public void createPayment(Order order) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            order.payment =  new Payment(PaymentType.CreditCard, "132-444-234-7744", "Amazon.com Visa",
+            order.payment =  new Payment(Payment.PaymentType.CreditCard, "132-444-234-7744", "Amazon.com Visa",
                     order.getGrandTotal(), dateFormat.parse("24/9/2024"));
         }
         catch (ParseException e)
@@ -64,6 +67,8 @@ public class AmazonOrderDetails {
         System.out.println("Order Details");
         System.out.println("*************");
         //  Add your code here
+        System.out.println("Ordered on " + order.getFormattedOrderDate() + "Order # " + order.getOrderNumber());
+
     }
 
     public void printInvoice(Order order) {
@@ -72,28 +77,58 @@ public class AmazonOrderDetails {
         System.out.println("***********************************************************\n");
         System.out.println("Order Placed: " + order.getFormattedOrderDate());
         System.out.println("Amazon.com order number: " + order.getOrderNumber());
-        System.out.println("Order Total: " + order.getFormatttedItemsSubtotal() + "\n");
+        System.out.println("Order Total: " + order.getFormattedItemsSubtotal() + "\n");
         // Add your code here.
 
     }
 
-//Center of UML the 'Order' Class
+    public void addProductsToArrayList(ArrayList<Product> products) {
+        products.add(new Product("125-01", "Books",
+                "The Pirate's Coin: A Sixty-Eight Rooms Adventure (The Sixty-Eight Rooms Adventures), Malone, Marianne",
+                "Amazon", 24.43
+                , Product.Condition.New));
+        // Add more products here.  Don't use mine
+    }
+
+
+    public ArrayList<OrderItem> createOrderItems(ArrayList<Product> products) {
+        ArrayList<OrderItem> orderItems = new ArrayList<OrderItem>();
+        //  Pick odd-numbered products for order.  qty will be odd number.
+        for (int i = 0; i <= products.size()-1; i++) {
+            if (i % 2 != 0) {
+                orderItems.add(new OrderItem((i), products.get(i)));
+            }
+        }
+        return orderItems;
+    }
+
+
+    public Order createOrder(ArrayList<OrderItem> orderItems, Customer customer) {
+        Order order = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        order = new Order("114-4625135-4373821",
+                //new SimpleDateFormat("dd/MM/yyyy").parse("21/9/2022"),
+                new Date(),
+                orderItems,
+                7.25,
+                customer);
+        return order;
+    }
+
+
+
+    //Center of UML the 'Order' Class
        class Order{
-            private Order(String orderNumber, Date orderDate,
+            public Order(String orderNumber,
+                         Date orderDate,
                          ArrayList<OrderItem> orderItems,
-                         double itemsSubtotal, double shippingHandling,
-                         double tax, double grandTotal, Customer customer,
-                         Shipment shipment, Payment payment) {
+                         double shippingHandling,
+                         Customer customer) {
                 this.orderNumber = orderNumber;
                 this.orderDate = orderDate;
                 this.orderItems = orderItems;
-                this.itemsSubtotal = itemsSubtotal;
                 this.shippingHandling = shippingHandling;
-                this.tax = tax;
-                this.grandTotal = grandTotal;
                 this.customer = customer;
-                this.shipment = shipment;
-                this.payment = payment;
             }
 
             private String orderNumber;
@@ -108,9 +143,7 @@ public class AmazonOrderDetails {
             private Payment payment;
 
 
-
-
-            public String getFormattedOrderDate() {
+    public String getFormattedOrderDate() {
                 return dateFormat.format(orderDate);
             }
 
@@ -189,24 +222,32 @@ public class AmazonOrderDetails {
            private Product product;
        }
        class Product{
-            public Product(String productId, String productDescription,
-                       String soldBy, double price, Condition condition) {
+            public Product(String productId,
+                           String productCategory,
+                           String productDescription,
+                            String soldBy,
+                           double price,
+                           Condition condition) {
                 this.productId = productId;
+                this.productCategory = productCategory;
                 this.productDescription = productDescription;
                 this.soldBy = soldBy;
                 this.price = price;
                 this.condition = condition;
             }
             private String productId;
+            private String productCategory;
             private String productDescription;
             private String soldBy;
             private double price;
-            private Condition condition;
+           private Condition condition;
+
 
             enum Condition{New, Used, Refurbished};
-            public String toString(){
-                return productDescription + " "  + soldBy + " " + price + " "  + condition;
-            }
+           public String toString() {
+               return productCategory  + " " +  productDescription + " "  + soldBy + " " + price + " "  + condition;
+
+           }
             }
 
 
@@ -221,21 +262,35 @@ public class AmazonOrderDetails {
         }
 //Top Left Branch of UML: *Order* -> 'Customer' Class
         class Customer{
-            public Customer(String customerName, String streetAddress,
-                    String contact, int customerId, String cityStateZip, String country) {
+            public Customer(String customerName, String streetAddress, String customerId, String cityStateZip, String country) {
                 this.customerName = customerName;
                 this.streetAddress = streetAddress;
-                this.contact = contact;
                 this.customerId = customerId;
                 this.cityStateZip = cityStateZip;
                 this.country = country;
             }
             private String customerName;
             private String streetAddress;
-            private String contact;
-            private int customerId;
+            private String customerId;
             private String cityStateZip;
             private String country;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public String getCityStateZip() {
+        return cityStateZip;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
         }
 //Left Branch of UML: *Order* -> 'Shipment' Class -> enum 'ShipmentStatus' Class && enum 'ShipmentSpeed' Class
         class Shipment {
@@ -288,20 +343,8 @@ public class AmazonOrderDetails {
     private Date paymentDate;
 
 
-    public Date getPaymentDate() {
-        return paymentDate;
-    }
-
-    public double getPaymentAmount() {
-        return paymentAmount;
-    }
-
     public String getBankOrIssuer() {
         return bankOrIssuer;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
     }
 
     public PaymentType getPaymentType() {
