@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class OrderProcessor {
-
+        //setup constants and enums
     static final double TAXRATE = .06;
 
     enum Condition {New, Used, Reconditioned}
