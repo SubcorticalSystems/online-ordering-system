@@ -7,4 +7,8 @@ public class OrderItem {
     Product product;
     int quantity;
 
+    @Override
+    public String toString() {
+        return product  + "\nQuantity: " +  quantity +"\n";
+    }
 }

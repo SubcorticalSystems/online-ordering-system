@@ -1,5 +1,5 @@
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
+//import java.text.NumberFormat;
+//import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Payment {
@@ -10,7 +10,7 @@ public class Payment {
         this.paymentAmount = paymentAmount;
         this.paymentDate = paymentDate;
     }
-    NumberFormat formatter = NumberFormat.getCurrencyInstance();
+    //NumberFormat formatter = NumberFormat.getCurrencyInstance();
     OrderProcessor.PaymentType paymentType;
     String accountNumber;
     String bankOrIssuer;
@@ -25,6 +25,11 @@ public class Payment {
         return "**** " + accountNumber.substring(accountNumber.length() - 4);
     }
 
+
+
+    /*
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy ");
+
     public String getBankOrIssuer() {
         return bankOrIssuer;
     }
@@ -33,9 +38,9 @@ public class Payment {
         return formatter.format(paymentAmount);
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy ");
-
     public String getFormattedPaymentDate() {
         return dateFormat.format(paymentDate);
     }
+
+     */
 }

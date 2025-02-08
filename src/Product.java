@@ -11,6 +11,8 @@ public class Product {
         this.soldBy = soldBy;
         this.price = price;
         this.condition = condition;
+
+        System.out.println(getPrice());
     }
 
      String productId;
@@ -21,7 +23,7 @@ public class Product {
      OrderProcessor.Condition condition;
 
 
-     /*
+
     void setProductId(String productId) {
         this.productId = productId;
     }
@@ -55,9 +57,10 @@ public class Product {
     public double getPrice() {
         return this.price;
     }
-    */
+    @Override
     public String toString() {
-        return productCategory  + " " +  productDescription + " "  + soldBy + " " + price + " "  + condition;
-
+        return "\nCategory: " + getProductCategory()  + "\n" +  getProductDescription() + "\nSeller: "
+                + getSoldBy() + "\n$" + getPrice() + "\nCondition: "  + condition;
     }
+
 }

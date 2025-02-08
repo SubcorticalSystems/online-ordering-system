@@ -1,6 +1,7 @@
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 import java.util.Date;
 
 class Order {
@@ -38,6 +39,7 @@ class Order {
         return orderNumber;
     }
 
+    /*
     public Customer getCustomer()
     {
         return customer;
@@ -51,6 +53,8 @@ class Order {
         return shipment;
     }
 
+     */
+
     public String getShippingHandlingFormatted() {
         return formatter.format(shippingHandling);
     }
@@ -59,7 +63,7 @@ class Order {
         double subtotal = 0;
 
         for (OrderItem item : orderItems) {
-            subtotal = subtotal + (item.quantity * item.product.price);
+            subtotal += (item.quantity * item.product.price);
         }
         itemsSubtotal = subtotal;
         return subtotal;
@@ -79,7 +83,7 @@ class Order {
     }
 
     public double getEstimatedTaxes() {
-        tax = (getItemsSubtotal() * OrderProcessor.TAXRATE) + shippingHandling;
+        tax = (itemsSubtotal * OrderProcessor.taxRate);
         return tax;
     }
 
@@ -97,8 +101,5 @@ class Order {
         }
         return shipment.shipmentStatus.name() + " " + dateFormat.format(shipment.shippedDate);
     }
-
-
-
 }
 
