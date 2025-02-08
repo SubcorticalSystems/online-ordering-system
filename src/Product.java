@@ -12,7 +12,7 @@ public class Product {
         this.price = price;
         this.condition = condition;
 
-        System.out.println(getPrice());
+        //System.out.println(getPrice());
     }
 
      String productId;

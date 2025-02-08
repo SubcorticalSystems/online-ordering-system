@@ -116,12 +116,11 @@ public class OrderProcessor {
 
 
     public ArrayList<OrderItem> createOrderItems(ArrayList<Product> products) {
-        System.out.println(products.size());
+        //System.out.println(products.size());
         ArrayList<OrderItem> orderItems = new ArrayList<>();
         //  Pick odd-numbered products for order.  qty will be odd number.
         for (int i = 0; i <= products.size() - 1; i++) {
                 orderItems.add(new OrderItem(products.get(i), 1));
-                System.out.println(orderItems.size());
         }
         return orderItems;
     }
